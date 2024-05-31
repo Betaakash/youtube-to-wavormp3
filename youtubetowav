@@ -29,5 +29,5 @@ def youtube_to_wav(youtube_url, save_directory):
 
 # Example usage
 youtube_url = input("Enter YouTube video link: ")
-save_directory = "/Users/sharaakash2003/Projects/Sampling World"
+save_directory = "yourpathhere"
 youtube_to_wav(youtube_url, save_directory)
