@@ -22,12 +22,11 @@ def youtube_to_wav(youtube_url, save_directory):
         sanitized_title = "".join([c for c in video_title if c.isalpha() or c.isdigit() or c==' ']).rstrip()
         wav_save_path = os.path.join(save_directory, sanitized_title + ".wav")
         wav_path = convert_to_wav(video_path, wav_save_path)
-        os.remove(video_path)  # Remove the temporary MP4 file
+        os.remove(video_path)  
         print(f"Successfully saved WAV file to: {wav_path}")
     except Exception as e:
         print(f"An error occurred: {e}")
 
-# Example usage
 youtube_url = input("Enter YouTube video link: ")
 save_directory = "yourpathhere"
 youtube_to_wav(youtube_url, save_directory)
