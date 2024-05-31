@@ -1,0 +1,33 @@
+import os
+from pytube import YouTube
+from moviepy.editor import *
+
+def download_youtube_audio(youtube_url, temp_save_path):
+    yt = YouTube(youtube_url)
+    audio_stream = yt.streams.filter(only_audio=True).first()
+    downloaded_file_path = audio_stream.download(output_path=temp_save_path)
+    return downloaded_file_path, yt.title
+
+def convert_to_mp3(video_path, mp3_save_path):
+    audio = AudioFileClip(video_path)
+    mp3_path = mp3_save_path if mp3_save_path.endswith('.mp3') else mp3_save_path + '.mp3'
+    audio.write_audiofile(mp3_path, codec='libmp3lame')
+    audio.close()
+    return mp3_path
+
+def youtube_to_mp3(youtube_url, save_directory):
+    try:
+        temp_save_path = save_directory
+        video_path, video_title = download_youtube_audio(youtube_url, temp_save_path)
+        sanitized_title = "".join([c for c in video_title if c.isalpha() or c.isdigit() or c == ' ']).rstrip()
+        mp3_save_path = os.path.join(save_directory, sanitized_title + ".mp3")
+        mp3_path = convert_to_mp3(video_path, mp3_save_path)
+        os.remove(video_path)  # Remove the temporary file
+        print(f"Successfully saved MP3 file to: {mp3_path}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+# Example usage
+youtube_url = input("Enter YouTube video link: ")
+save_directory = "/Users/sharaakash2003/Projects/Sampling World"
+youtube_to_mp3(youtube_url, save_directory)

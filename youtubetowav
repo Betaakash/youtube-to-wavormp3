@@ -1,0 +1,33 @@
+import os
+from pytube import YouTube
+from moviepy.editor import *
+
+def download_youtube_audio(youtube_url, temp_save_path):
+    yt = YouTube(youtube_url)
+    audio_stream = yt.streams.filter(only_audio=True).first()
+    downloaded_file_path = audio_stream.download(output_path=temp_save_path)
+    return downloaded_file_path, yt.title
+
+def convert_to_wav(video_path, wav_save_path):
+    audio = AudioFileClip(video_path)
+    wav_path = wav_save_path if wav_save_path.endswith('.wav') else wav_save_path + '.wav'
+    audio.write_audiofile(wav_path, codec='pcm_s16le')
+    audio.close()
+    return wav_path
+
+def youtube_to_wav(youtube_url, save_directory):
+    try:
+        temp_save_path = save_directory
+        video_path, video_title = download_youtube_audio(youtube_url, temp_save_path)
+        sanitized_title = "".join([c for c in video_title if c.isalpha() or c.isdigit() or c==' ']).rstrip()
+        wav_save_path = os.path.join(save_directory, sanitized_title + ".wav")
+        wav_path = convert_to_wav(video_path, wav_save_path)
+        os.remove(video_path)  # Remove the temporary MP4 file
+        print(f"Successfully saved WAV file to: {wav_path}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+# Example usage
+youtube_url = input("Enter YouTube video link: ")
+save_directory = "/Users/sharaakash2003/Projects/Sampling World"
+youtube_to_wav(youtube_url, save_directory)
